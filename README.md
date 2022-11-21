@@ -7,10 +7,10 @@ Add following to the config.json of your Hindenburg Server:
         "hbplugin-auto-mute-discord": {
             "botTokenMain": "DISCORDBOTTOKENOFFIRSTBOT",
             "botTokenSecond": "DISCORDBOTTOKENOFSECONDBOT",
-            "mariadbDatabase": "dbName,
+            "mariadbDatabase": "dbName",
             "mariadbUser": "dbUser",
             "mariadbPassword": "dbPassword",
-            "mariadbHost": "127.0.0.1,
+            "mariadbHost": "127.0.0.1",
             "mariadbPort": "3306"
         },
 ```
