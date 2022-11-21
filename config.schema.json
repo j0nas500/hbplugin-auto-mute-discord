@@ -1,0 +1,25 @@
+{
+    "properties": {
+        "botTokenMain": {
+            "type": "string"
+        },
+        "botTokenSecond": {
+            "type": "string"
+        },
+        "mariadbDatabase": {
+            "type": "string"
+        },
+        "mariadbUser": {
+            "type": "string"
+        },
+        "mariadbPassword": {
+            "type": "string"
+        },
+        "mariadbHost": {
+            "type": "string"
+        },
+        "mariadbPort": {
+            "type": "integer"
+        }
+    }
+}

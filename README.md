@@ -1,0 +1,1 @@
+# hbplugin-auto-mute-discord
