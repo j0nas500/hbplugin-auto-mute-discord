@@ -16,6 +16,8 @@ export default async (client: Client, interaction: SelectMenuInteraction, logger
     const sql_host = `SELECT discord_message_id, discord_text_id, roomcode FROM players WHERE is_host = TRUE and roomcode = (SELECT roomcode FROM players WHERE discord_user_id = '${member.id}')`;
     const host = await db.query(sql_host)
 
+    const sql_linked = `INSERT INTO linked_players VALUES('${title}', (SELECT username FROM players WHERE client_id = ${client_id})) ON DUPLICATE KEY UPDATE username = (SELECT username FROM players WHERE client_id = ${client_id})`;
+    await db.query(sql_linked);
     const sql = `UPDATE players SET discord_message_id = '${host[0].discord_message_id}', discord_text_id = '${host[0].discord_text_id}', discord_user_id = '${title}', discord_voice_id = ${member.voice.channelId} WHERE client_id = ${client_id}`
     await db.query(sql)
 
