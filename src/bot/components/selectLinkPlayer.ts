@@ -22,7 +22,9 @@ export default async (client: Client, interaction: SelectMenuInteraction, logger
         let sql = `SELECT discord_message_id, discord_text_id, roomcode FROM players WHERE is_host = TRUE and roomcode = (SELECT roomcode FROM players WHERE discord_user_id = '${user.id}')`;
         const host = await db.query(sql)
         sql = `UPDATE players SET discord_user_id = NULL, discord_voice_id = NULL, is_host = FALSE WHERE discord_user_id = '${user.id}'`
-        const unlink = await db.query(sql);        
+        const unlink = await db.query(sql);
+        sql = `DELETE FROM linked_players WHERE discord_user_id = '${user.id}'`        
+        await db.query(sql)        
         
         if (unlink.affectedRows == 1) {
             await interaction.followUp({

@@ -72,6 +72,15 @@ export const Link: Command = {
         const message_id = host[0].discord_message_id;
         const text_id = host[0].discord_text_id;
 
+        sql = `SELECT username FROM players WHERE discord_user_id = '${linkMember.id}'`
+        const allreadyLinked = await db.query(sql)
+        if (allreadyLinked[0] !== undefined) {
+            await interaction.editReply({
+                content: `${linkMember} allready linked to ${allreadyLinked[0].username}`                
+            }).catch(e => { logger.error("Can't editReply() in Link.ts", e) });
+            return;
+        }
+
 
 
         sql = `SELECT username, color_id, client_id FROM players WHERE roomcode = '${code}' and discord_user_id IS NULL`
@@ -114,8 +123,6 @@ export const Link: Command = {
         await interaction.editReply({
             content: "Setup complete"
         });
-
-        await interaction.deleteReply();
 
         const channel = await client.channels.fetch(text_id)
         if (channel == undefined || !channel.isTextBased()) {

@@ -73,7 +73,7 @@ export const Setup: Command = {
             const messageId = host[0].discord_message_id;
             const channel: TextChannel = await client.channels.fetch(channelId).catch(e => { logger.error("Setup.ts TextChannel not found", e) }) as TextChannel;
             await channel.messages.edit(messageId, {components: undefined}).catch(e => { logger.error("Setup.ts Message Edit failed", e) }).then(() => { setTimeout(() => undefined, 5000)});
-            await channel.messages.delete(messageId);
+            await channel.messages.delete(messageId).catch(e => { logger.error("Setup.ts Message Delete failed", e) });
         }
 
         if (players.length > 1) {

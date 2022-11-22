@@ -21,11 +21,10 @@ export default async (client: Client, interaction: SelectMenuInteraction, logger
     const sql = `UPDATE players SET discord_message_id = '${host[0].discord_message_id}', discord_text_id = '${host[0].discord_text_id}', discord_user_id = '${title}', discord_voice_id = ${member.voice.channelId} WHERE client_id = ${client_id}`
     await db.query(sql)
 
-    await bot.updateEmbed(host[0].discord_text_id, host[0].discord_message_id, host[0].rommcode, EmbedGameState.LOBBY, false);
+    await bot.updateEmbed(host[0].discord_text_id, host[0].discord_message_id, host[0].roomcode, EmbedGameState.LOBBY, false);
 
-    await interaction.deleteReply();
 
-    await interaction.followUp({
-        content: `${title} connected`, ephemeral: true
+    await interaction.editReply({
+        content: `${title} connected`, components: []
     }).catch(e => { logger.error("Can't followUp()) in selectRemoteLinkPlayer.ts", e) });
 }

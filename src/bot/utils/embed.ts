@@ -11,11 +11,11 @@ export enum EmbedGameState {
 
 export default async (client: Client, logger: Logger, db: DbConnection, msg: Message<boolean>, code: string, gameState: EmbedGameState, autoLink: boolean) => {
     
-    
     let sql = `SELECT username, discord_user_id, discord_voice_id FROM players WHERE roomcode = '${code}' AND is_host = TRUE`;
     const host = await db.query(sql);
 
     if (host[0] == undefined) {
+        logger.debug("embed.ts: Host undefined");
         sql = `UPDATE players SET discord_message_id = NULL, discord_text_id = NULL, is_host = FALSE WHERE roomcode = '${code}'`
         await db.query(sql)
         await msg.edit({components: []}).catch(e => logger.error("embed.ts: Embed not found", e)).then(() => {

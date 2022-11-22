@@ -44,6 +44,12 @@ export class Bot {
             return
         }
 
+        if (code == undefined) {
+            this.logger.error("CODE undefined in updateEmbed()")
+            this.logger.debug("channel_id", channel_id)
+            return
+        }
+
         if (this.db == undefined) {
             this.logger.error("updateEmbed() in Bot.ts: DB CONNECTION undefined")
             return
