@@ -95,19 +95,17 @@ async function splitMembers(result: any, mainBot: Bot, secondBot: Bot, logger: L
     if (channelMain == undefined || channelSecond == undefined) return 0;
 
     for(let i = 0; i < result.length; i++) {
-        const member: GuildMember = await channelMain.guild.members.fetch(result[i].discord_user_id);
-        if (member.voice.channel == undefined) continue;
 
         if (calls % 2 == 0) {
             const member: GuildMember = await channelSecond.guild.members.fetch(result[i].discord_user_id);
             //await member.edit({mute: true, deaf: true}).catch((e) => logger.error("[BOT] SECOND mute_deafen()", e));
-            queue.push(handleQueue(member, false, logger, voicestate));
+            queue.push(handleQueue(channelSecond, result[i].discord_user_id, logger, voicestate));
             calls += 1;
             continue
         }
 
         //await member.edit({mute: true, deaf: true}).catch((e) => logger.error("[BOT] MAIN mute_deafen()", e));
-        queue.push(handleQueue(member, true, logger, voicestate));
+        queue.push(handleQueue(channelMain, result[i].discord_user_id, logger, voicestate));
         calls += 1;
         continue
     }
@@ -115,29 +113,33 @@ async function splitMembers(result: any, mainBot: Bot, secondBot: Bot, logger: L
     return calls
 }
 
-async function handleQueue(member: GuildMember, isMain: boolean, logger: Logger, voiceState: VoiceStateEnum) {
+async function handleQueue(channel: VoiceBasedChannel, member_id: string, logger: Logger, voiceState: VoiceStateEnum) {
+
+    const member: GuildMember = await channel.guild.members.fetch(member_id);
+    if (member.voice.channel == undefined) return;
+
     try {
         switch(voiceState) {
             case VoiceStateEnum.MUTE_DEAFEN:
-                if (member.voice.serverMute && member.voice.serverDeaf) break;
-                await member.edit({mute: true, deaf: true}).catch((e) => logger.error((isMain) ? "[BOT] MAIN mute_deaf()" : "[BOT] SECOND mute_deaf()", e));
-                logger.debug((isMain) ? `[BOT] MAIN ${member.displayName} muted and deafed` : `[BOT] SECOND ${member.displayName} muted and deafed`);
+                //if (member.voice.serverMute && member.voice.serverDeaf) break;
+                await member.edit({mute: true, deaf: true}).catch((e) => logger.error((channel.client.user.username == "AutoMute") ? "[BOT] MAIN mute_deaf()" : "[BOT] SECOND mute_deaf()", e));
+                logger.debug((channel.client.user.username == "AutoMute") ? `[BOT] MAIN ${member.displayName} muted and deafed` : `[BOT] SECOND ${member.displayName} muted and deafed`);
                 break;
             case VoiceStateEnum.UNMUTE_UNDEAF:
-                if (member.voice.serverMute && !member.voice.serverDeaf) { logger.error("IF"); break;}
+                //if (!member.voice.serverMute && !member.voice.serverDeaf) { logger.error("IF"); break;}
                 logger.error("NOT IF")
-                await member.edit({mute: false, deaf: false}).catch((e) => logger.error((isMain) ? "[BOT] MAIN mute_deafen()" : "[BOT] SECOND mute_deafen()", e));
-                logger.debug((isMain) ? `[BOT] MAIN ${member.displayName} unmuted and undeafed` : `[BOT] SECOND ${member.displayName} unmuted and undeafed`);
+                await member.edit({mute: false, deaf: false}).catch((e) => logger.error((channel.client.user.username == "AutoMute") ? "[BOT] MAIN mute_deafen()" : "[BOT] SECOND mute_deafen()", e));
+                logger.debug((channel.client.user.username == "AutoMute") ? `[BOT] MAIN ${member.displayName} unmuted and undeafed` : `[BOT] SECOND ${member.displayName} unmuted and undeafed`);
                 break;
             case VoiceStateEnum.MUTE_ONLY:
-                if (member.voice.serverMute) break;
-                await member.edit({mute: true}).catch((e) => logger.error((isMain) ? "[BOT] MAIN mute_deafen()" : "[BOT] SECOND mute_deafen()", e));
-                logger.debug((isMain) ? `[BOT] MAIN ${member.displayName} muted` : `[BOT] SECOND ${member.displayName} muted`);
+                //if (member.voice.serverMute) break;
+                await member.edit({mute: true}).catch((e) => logger.error((channel.client.user.username == "AutoMute") ? "[BOT] MAIN mute_deafen()" : "[BOT] SECOND mute_deafen()", e));
+                logger.debug((channel.client.user.username == "AutoMute") ? `[BOT] MAIN ${member.displayName} muted` : `[BOT] SECOND ${member.displayName} muted`);
                 break;
             case VoiceStateEnum.MUTE_UNDEAF:
-                if (member.voice.serverMute && !member.voice.serverDeaf) break;
-                await member.edit({mute: true, deaf: false}).catch((e) => logger.error((isMain) ? "[BOT] MAIN mute_deafen()" : "[BOT] SECOND mute_deafen()", e));
-                logger.debug((isMain) ? `[BOT] MAIN ${member.displayName} muted and undeafed` : `[BOT] SECOND ${member.displayName} muted and undeafed`);
+                //if (member.voice.serverMute && !member.voice.serverDeaf) break;
+                await member.edit({mute: true, deaf: false}).catch((e) => logger.error((channel.client.user.username == "AutoMute") ? "[BOT] MAIN mute_deafen()" : "[BOT] SECOND mute_deafen()", e));
+                logger.debug((channel.client.user.username == "AutoMute") ? `[BOT] MAIN ${member.displayName} muted and undeafed` : `[BOT] SECOND ${member.displayName} muted and undeafed`);
                 break;
         }
         
