@@ -26,8 +26,7 @@ export const queue = async.queue((_task, _completed) => {
 
 export default async (mainBot: Bot, secondBot: Bot, db: DbConnection, code: string, gameVoiceState: GameVoiceStateEnum, logger: Logger): Promise<void> => {
     
-    queue.kill();
-    
+    if (gameVoiceState !== GameVoiceStateEnum.MUTE_ONLY) queue.kill();    
 
     switch(gameVoiceState) {
         case GameVoiceStateEnum.GAME_START:
