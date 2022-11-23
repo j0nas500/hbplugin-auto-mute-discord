@@ -30,7 +30,6 @@
   },
   "devDependencies": {
     "@skeldjs/hindenburg": "^1.1.22",
-    "@types/async": "^3",
     "typescript": "latest"
   },
   "plugin": {
@@ -47,7 +46,6 @@
   },
   "dependencies": {
     "@typeit/discord": "^5.0.16",
-    "async": "^3.2.4",
     "discord.js": "^14.6.0",
     "mariadb": "^3.0.2"
   }

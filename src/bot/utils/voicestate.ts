@@ -34,7 +34,7 @@ export default async (mainBot: Bot, secondBot: Bot, db: DbConnection, code: stri
             const gameStart = await db.query(sql_gameStart);
             if (gameStart[0] == undefined) return
 
-            await splitMembers(gameStart, mainBot, secondBot, logger, VoiceStateEnum.MUTE_DEAFEN)
+            const a = await splitMembers(gameStart, mainBot, secondBot, logger, VoiceStateEnum.MUTE_DEAFEN)
 
             break;
         case GameVoiceStateEnum.GAME_END:
@@ -42,7 +42,7 @@ export default async (mainBot: Bot, secondBot: Bot, db: DbConnection, code: stri
             const gameEnd = await db.query(sql_gameEnd);
             if (gameEnd[0] == undefined) return;
 
-            await splitMembers(gameEnd, mainBot, secondBot, logger, VoiceStateEnum.UNMUTE_UNDEAF)
+            const b = await splitMembers(gameEnd, mainBot, secondBot, logger, VoiceStateEnum.UNMUTE_UNDEAF)
 
             break
         case GameVoiceStateEnum.MEETING_START:
@@ -56,7 +56,7 @@ export default async (mainBot: Bot, secondBot: Bot, db: DbConnection, code: stri
                 calls = await splitMembers(meetingStartDead, mainBot, secondBot, logger, VoiceStateEnum.MUTE_UNDEAF)
             }
             if (meetingStartAlive[0] !== undefined) {
-                await splitMembers(meetingStartAlive, mainBot, secondBot, logger, VoiceStateEnum.UNMUTE_UNDEAF, calls)
+                const c = await splitMembers(meetingStartAlive, mainBot, secondBot, logger, VoiceStateEnum.UNMUTE_UNDEAF, calls)
             }
 
             break;
@@ -72,7 +72,7 @@ export default async (mainBot: Bot, secondBot: Bot, db: DbConnection, code: stri
             }
 
             if (meetingEndDead[0] !== undefined) {
-                await splitMembers(meetingEndDead, mainBot, secondBot, logger, VoiceStateEnum.UNMUTE_UNDEAF, calls_2)
+                const d = await splitMembers(meetingEndDead, mainBot, secondBot, logger, VoiceStateEnum.UNMUTE_UNDEAF, calls_2)
             }
 
             break;
@@ -81,7 +81,7 @@ export default async (mainBot: Bot, secondBot: Bot, db: DbConnection, code: stri
             const muteOnly = await db.query(sql_muteOnly);
             if (muteOnly[0] == undefined) return;
 
-            await splitMembers(muteOnly, mainBot, secondBot, logger, VoiceStateEnum.MUTE_ONLY)
+            const e = await splitMembers(muteOnly, mainBot, secondBot, logger, VoiceStateEnum.MUTE_ONLY)
 
             break;
     }
@@ -93,11 +93,11 @@ async function splitMembers(result: any, mainBot: Bot, secondBot: Bot, logger: L
 
     if (channelMain == undefined || channelSecond == undefined) return 0;
 
-    /*channelMain.members.forEach(async member => {
+    channelMain.members.forEach(async member => {
         //await member.edit({mute: true, deaf: true}).catch((e) => logger.error("[BOT] MAIN mute_deafen()", e));
-        await handleQueue(channelMain, member.id, logger, voicestate);
+        const a = await handleQueue(channelMain, member.id, logger, voicestate);
         calls += 1;
-    })*/
+    })
 
     /*const membersMain: Collection<string, GuildMember> = channelMain.members
     const membersSecond: Collection<string, GuildMember> = channelSecond.members
@@ -116,22 +116,25 @@ async function splitMembers(result: any, mainBot: Bot, secondBot: Bot, logger: L
         calls += 1;
         continue
     }*/
-
+    /*
+    cancel(false)
     for (let i = 0; i < result.length; i++) {
 
+        if (isCancelled) continue
+
         if (calls % 2 == 0) {
-            const member: GuildMember = await channelSecond.guild.members.fetch(result[i].discord_user_id);
+            //const member: GuildMember = await channelSecond.guild.members.fetch(result[i].discord_user_id);
             //await member.edit({mute: true, deaf: true}).catch((e) => logger.error("[BOT] SECOND mute_deafen()", e));
-            await handleQueue(channelSecond, result[i].discord_user_id, logger, voicestate);
+            const second = await handleQueue(channelSecond, result[i].discord_user_id, logger, voicestate);
             calls += 1;
             continue
         }
 
         //await member.edit({mute: true, deaf: true}).catch((e) => logger.error("[BOT] MAIN mute_deafen()", e));
-        await handleQueue(channelMain, result[i].discord_user_id, logger, voicestate);
+        const main = await handleQueue(channelMain, result[i].discord_user_id, logger, voicestate);
         calls += 1;
         continue
-    }
+    }*/
     logger.debug("Calls", calls)
     return calls
 }
@@ -145,34 +148,34 @@ async function handleQueue(channel: VoiceBasedChannel, member_id: string, logger
     try {
         switch (voiceState) {
             case VoiceStateEnum.MUTE_DEAFEN:
-                await channel.guild.members.fetch(member_id).then(async member => {
+                await channel.guild.members.fetch(member_id).then(member => {
                     if (member.voice.channel == undefined) return
                     //if (member.voice.serverMute && member.voice.serverDeaf) return
-                    await member.edit({ mute: true, deaf: true })
+                    member.edit({ mute: true, deaf: true })
                     logger.debug((channel.client.user.username == "AutoMute") ? `[BOT] MAIN ${member.displayName} muted and deafed` : `[BOT] SECOND ${member.displayName} muted and deafed`);
                 }).catch((e) => logger.error((channel.client.user.username == "AutoMute") ? "[BOT] MAIN mute_deaf()" : "[BOT] SECOND mute_deaf()", e));
                 break;
             case VoiceStateEnum.UNMUTE_UNDEAF:
-                await channel.guild.members.fetch(member_id).then(async (member) => {
+                await channel.guild.members.fetch(member_id).then(member => {
                     if (member.voice.channel == undefined) return
                     //if (!member.voice.serverMute && !member.voice.serverDeaf) {logger.error("IF"); return}
-                    await member.edit({ mute: false, deaf: false })
+                    member.edit({ mute: false, deaf: false })
                     logger.debug((channel.client.user.username == "AutoMute") ? `[BOT] MAIN ${member.displayName} unmuted and undeafed` : `[BOT] SECOND ${member.displayName} unmuted and undeafed`);
                 }).catch((e) => logger.error((channel.client.user.username == "AutoMute") ? "[BOT] MAIN unmute_undeaf()" : "[BOT] SECOND unmute_undeaf()", e));
                 break;
             case VoiceStateEnum.MUTE_ONLY:
-                await channel.guild.members.fetch(member_id).then(async member => {
+                await channel.guild.members.fetch(member_id).then(member => {
                     if (member.voice.channel == undefined) return
                     //if (member.voice.serverMute) return
-                    await member.edit({ mute: true })
+                    member.edit({ mute: true })
                     logger.debug((channel.client.user.username == "AutoMute") ? `[BOT] MAIN ${member.displayName} muted` : `[BOT] SECOND ${member.displayName} muted`);
                 }).catch((e) => logger.error((channel.client.user.username == "AutoMute") ? "[BOT] MAIN mute()" : "[BOT] SECOND mute()", e));
                 break;
             case VoiceStateEnum.MUTE_UNDEAF:
-                await channel.guild.members.fetch(member_id).then(async member => {
+                await channel.guild.members.fetch(member_id).then(member => {
                     if (member.voice.channel == undefined) return
                     //if (member.voice.serverMute && !member.voice.serverDeaf) return
-                    await member.edit({ mute: true, deaf: false })
+                    member.edit({ mute: true, deaf: false })
                     logger.debug((channel.client.user.username == "AutoMute") ? `[BOT] MAIN ${member.displayName} muted and undeafed` : `[BOT] SECOND ${member.displayName} muted and undeafed`);
                 }).catch((e) => logger.error((channel.client.user.username == "AutoMute") ? "[BOT] MAIN mute_undeaf()" : "[BOT] SECOND mute_undeaf()", e));
                 break;
@@ -182,7 +185,6 @@ async function handleQueue(channel: VoiceBasedChannel, member_id: string, logger
         logger.error("CATCH");
     }
     finally {
-
     }
 }
 

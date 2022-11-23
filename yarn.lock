@@ -321,13 +321,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/async@npm:^3":
-  version: 3.2.15
-  resolution: "@types/async@npm:3.2.15"
-  checksum: c0d9dae6cabc000abe3bb60ce1c7f3e6019aacf4f5f4ad659fef9f9f4d5dd2a59c6524da30d411dab67dab9f348c527bb18d59ae06d0a26f4a64ef3e6b2ec998
-  languageName: node
-  linkType: hard
-
 "@types/geojson@npm:^7946.0.10":
   version: 7946.0.10
   resolution: "@types/geojson@npm:7946.0.10"
@@ -456,13 +449,6 @@ __metadata:
     delegates: ^1.0.0
     readable-stream: ^3.6.0
   checksum: 52590c24860fa7173bedeb69a4c05fb573473e860197f618b9a28432ee4379049336727ae3a1f9c4cb083114601c1140cee578376164d0e651217a9843f9fe83
-  languageName: node
-  linkType: hard
-
-"async@npm:^3.2.4":
-  version: 3.2.4
-  resolution: "async@npm:3.2.4"
-  checksum: 43d07459a4e1d09b84a20772414aa684ff4de085cbcaec6eea3c7a8f8150e8c62aa6cd4e699fe8ee93c3a5b324e777d34642531875a0817a35697522c1b02e89
   languageName: node
   linkType: hard
 
@@ -990,8 +976,6 @@ __metadata:
   dependencies:
     "@skeldjs/hindenburg": ^1.1.22
     "@typeit/discord": ^5.0.16
-    "@types/async": ^3
-    async: ^3.2.4
     discord.js: ^14.6.0
     mariadb: ^3.0.2
     typescript: latest
