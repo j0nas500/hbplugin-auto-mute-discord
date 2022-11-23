@@ -13,7 +13,7 @@ export default (client: Client, logger: Logger, db: DbConnection, bot: Bot): voi
             const sql = `UPDATE players SET discord_user_id = NULL, discord_voice_id = NULL, is_host = FALSE WHERE discord_user_id = ${oldState.member?.id}`;
             const result = await db.query(sql);
             if (result.affectedRows == 1) {
-                const sql = `SELECT discord_message_id, discord_text_id, roomcode FROM players WHERE roomcode = (SELECT roomcode FROM players WHERE discord_voice_id = '${oldState.channelId}')`;
+                const sql = `SELECT discord_message_id, discord_text_id, roomcode FROM players WHERE roomcode = (SELECT roomcode FROM players WHERE discord_voice_id = '${oldState.channelId}' LIMIT 1)`;
                 const result = await db.query(sql);
                 if (result[0] == undefined) return;
                 bot.updateEmbed(result[0].discord_text_id, result[0].discord_message_id, result[0].roomcode, EmbedGameState.LOBBY, false);

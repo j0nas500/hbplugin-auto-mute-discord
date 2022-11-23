@@ -127,7 +127,7 @@ export class AutoMuteDiscordPlugin extends WorkerPlugin {
 
         this.logger.debug("PLAYER DIE")
         try {
-            await voicestate(this.mainBot, this.secondBot, this.db, roomcode, GameVoiceStateEnum.MUTE_ONLY, this.logger);
+            await voicestate(this.mainBot, this.secondBot, this.db, roomcode, GameVoiceStateEnum.MUTE_ONLY, this.logger, ev.player.clientId);
         } catch (error: any) {
             if (error.name === "AbortError") this.logger.info("[BOT] ABORT: Mute Only");
             else this.logger.error("[BOT] ERROR: Mute Only", error);
@@ -163,7 +163,7 @@ export class AutoMuteDiscordPlugin extends WorkerPlugin {
 
         sql = `UPDATE players SET is_ghost = FALSE WHERE roomcode = '${roomcode}'`;
         await this.db.query(sql);
-        
+
         this.logger.debug("ROOM GAMEEND")
         try {
             await voicestate(this.mainBot, this.secondBot, this.db, roomcode, GameVoiceStateEnum.GAME_END, this.logger);
