@@ -147,14 +147,16 @@ async function createEmbed(all_players: any, connected_players: any, code: strin
             playersFields.push(
                 {
                     name: `${emoji(player.color_id, Emoji.DEAD)} ${player.username}`,
-                    value: `${user}`
+                    value: `${user}`,
+                    inline: true
                 });
             return;
         }
         playersFields.push(
             {
                 name: `${emoji(player.color_id, Emoji.ALIVE)} ${player.username}`,
-                value: `${user}`
+                value: `${user}`,
+                inline: true
             });
     })
 
